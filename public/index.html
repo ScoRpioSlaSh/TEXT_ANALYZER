@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analizador de Tono y Emociones - CarlosPodcast</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --gold-soft: #c6a95e;
+      --gold-soft-2: #e2c47c;
+      --bg-sky-1: #d8ebff;
+      --bg-sky-2: #f3f8ff;
+      --bg-sky-3: #ffffff;
+      --text-main: #1f2933;
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --chip-positive: #c4f5d4;
+      --chip-negative: #ffd4d4;
+      --chip-neutral: #e5e7eb;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Inter", sans-serif;
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(circle at 0% 0%, var(--bg-sky-1), var(--bg-sky-2), var(--bg-sky-3));
+      background-size: 200% 200%;
+      animation: skyMove 18s ease-in-out infinite;
+      display: flex;
+      justify-content: center;
+      padding: 40px 16px;
+      color: var(--text-main);
+    }
+
+    @keyframes skyMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .container {
+      max-width: 960px;
+      width: 100%;
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      border-radius: 26px;
+      padding: 32px 28px 32px;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.20);
+      position: relative;
+      overflow: hidden;
+      animation: fadeIn 0.8s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .glow {
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      background: radial-gradient(circle, rgba(198,169,94,0.26), transparent);
+      top: -100px;
+      left: -80px;
+      pointer-events: none;
+      opacity: 0.8;
+    }
+
+    .glow-right {
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      background: radial-gradient(circle, rgba(148,197,255,0.26), transparent);
+      bottom: -130px;
+      right: -100px;
+      pointer-events: none;
+      opacity: 0.9;
+    }
+
+    .logo {
+      position: absolute;
+      top: 18px;
+      right: 22px;
+      height: 74px;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.35));
+    }
+
+    .header {
+      margin-bottom: 24px;
+      padding-right: 120px; /* espacio para el logo */
+    }
+
+    .title {
+      font-size: 34px;
+      font-weight: 800;
+      margin: 0 0 6px;
+      background: linear-gradient(90deg, var(--gold-soft), var(--gold-soft-2));
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .subtitle {
+      margin: 0;
+      font-size: 14px;
+      color: #4b5563;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 850px) {
+      .container {
+        padding: 24px 18px 26px;
+      }
+      .header {
+        padding-right: 0;
+        padding-top: 70px;
+        text-align: center;
+      }
+      .logo {
+        top: 16px;
+        right: 50%;
+        transform: translateX(50%);
+        height: 64px;
+      }
+      .title {
+        font-size: 28px;
+      }
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    label {
+      font-weight: 600;
+      font-size: 15px;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .input-card {
+      background: rgba(255,255,255,0.9);
+      border-radius: 18px;
+      padding: 18px 18px 20px;
+      border: 1px solid rgba(226, 212, 184, 0.8);
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+    }
+
+    textarea {
+      width: 100%;
+      height: 190px;
+      padding: 16px;
+      border-radius: 14px;
+      border: 2px solid #e2d5b8;
+      background: #ffffff;
+      font-size: 15px;
+      resize: vertical;
+      outline: none;
+      transition: 0.25s;
+      font-family: inherit;
+    }
+
+    textarea:focus {
+      border-color: var(--gold-soft);
+      box-shadow: 0 0 0 3px rgba(198,169,94,0.25);
+    }
+
+    .textarea-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .char-count {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    button {
+      background: linear-gradient(135deg, var(--gold-soft), var(--gold-soft-2));
+      color: white;
+      border: none;
+      padding: 11px 26px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 700;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 14px rgba(198,169,94,0.45);
+      filter: brightness(1.02);
+    }
+
+    button:disabled {
+      opacity: 0.7;
+      cursor: wait;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .btn-icon {
+      font-size: 18px;
+    }
+
+    .status {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 6px;
+    }
+
+    .results-card {
+      background: rgba(255,255,255,0.9);
+      border-radius: 20px;
+      padding: 18px 18px 20px;
+      border: 1px solid rgba(209, 213, 219, 0.9);
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+      max-height: 420px;
+      overflow-y: auto;
+    }
+
+    .results-card h2 {
+      margin: 0 0 12px;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--gold-soft);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .emoji {
+      font-size: 19px;
+    }
+
+    .section-block {
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #374151;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      border: 1px solid rgba(148,163,184,0.5);
+      background: #f9fafb;
+      gap: 4px;
+    }
+
+    .chip-positive {
+      background: var(--chip-positive);
+      border-color: #93e4a9;
+    }
+
+    .chip-negative {
+      background: var(--chip-negative);
+      border-color: #f59e9e;
+    }
+
+    .chip-neutral {
+      background: var(--chip-neutral);
+      border-color: #9ca3af;
+    }
+
+    .badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      color: #4b5563;
+    }
+
+    .badge-intensity {
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+
+    ul {
+      margin: 4px 0 0 18px;
+      padding: 0;
+      font-size: 14px;
+    }
+
+    li + li {
+      margin-top: 6px;
+    }
+
+    .empty {
+      font-size: 13px;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="glow"></div>
+    <div class="glow-right"></div>
+
+    <!-- LOGO (asegúrate de tener logo.png en /public) -->
+    <img src="logo.png" class="logo" alt="CarlosPodcast Logo">
+
+    <div class="header">
+      <h1 class="title">Analizador de Tono y Emociones</h1>
+      <p class="subtitle">
+        Pega cualquier texto y obtén un análisis emocional claro: tonos principales,
+        intensidad, polaridad y consejos para fortalecer tus relaciones.
+      </p>
+    </div>
+
+    <div class="grid">
+      <!-- LADO IZQUIERDO: INPUT -->
+      <div class="input-card">
+        <label for="textInput">Texto a analizar</label>
+        <textarea
+          id="textInput"
+          placeholder="Escribe o pega aquí el texto que quieras analizar…"
+        ></textarea>
+
+        <div class="textarea-footer">
+          <span id="charCount" class="char-count">0 caracteres</span>
+          <div>
+            <button id="analyzeBtn" onclick="analyzeText()">
+              <span class="btn-icon">✨</span>
+              ANALIZAR
+            </button>
+          </div>
+        </div>
+        <div id="status" class="status"></div>
+      </div>
+
+      <!-- LADO DERECHO: RESULTADOS -->
+      <div class="results-card" id="results" style="display: none;">
+        <h2><span class="emoji">📊</span> Resultado del análisis</h2>
+
+        <div class="section-block">
+          <div class="section-title">Tono principal</div>
+          <div id="tonoPrincipal" class="chips"></div>
+        </div>
+
+        <div class="section-block">
+          <div class="section-title">Emoción predominante</div>
+          <div id="emocionPredominante"></div>
+        </div>
+
+        <div class="section-block">
+          <div class="section-title">Análisis detallado</div>
+          <div id="analisisDetallado"></div>
+        </div>
+
+        <div class="section-block">
+          <div class="section-title">Cambios de tono en el texto</div>
+          <div id="cambiosDeTono"></div>
+        </div>
+
+        <div class="section-block">
+          <div class="section-title">Consejos para mejorar los aspectos negativos</div>
+          <div id="consejosNegativos"></div>
+        </div>
+
+        <div class="section-block">
+          <div class="section-title">Consejos para reforzar lo positivo</div>
+          <div id="consejosPositivos"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const textInput = document.getElementById("textInput");
+    const charCount = document.getElementById("charCount");
+    const statusEl = document.getElementById("status");
+    const analyzeBtn = document.getElementById("analyzeBtn");
+    const resultsEl = document.getElementById("results");
+
+    const tonoPrincipalEl = document.getElementById("tonoPrincipal");
+    const emocionPredominanteEl = document.getElementById("emocionPredominante");
+    const analisisDetalladoEl = document.getElementById("analisisDetallado");
+    const cambiosDeTonoEl = document.getElementById("cambiosDeTono");
+    const consejosNegativosEl = document.getElementById("consejosNegativos");
+    const consejosPositivosEl = document.getElementById("consejosPositivos");
+
+    // contador de caracteres
+    textInput.addEventListener("input", () => {
+      const len = textInput.value.length;
+      charCount.textContent = `${len} caracter${len === 1 ? "" : "es"}`;
+    });
+
+    function createPolarityClass(polaridad) {
+      if (polaridad === "positiva") return "chip-positive";
+      if (polaridad === "negativa") return "chip-negative";
+      return "chip-neutral";
+    }
+
+    async function analyzeText() {
+      const text = textInput.value.trim();
+      if (!text) {
+        alert("Por favor ingresa un texto para analizar.");
+        return;
+      }
+
+      analyzeBtn.disabled = true;
+      statusEl.textContent = "Analizando texto…";
+
+      try {
+        const response = await fetch("/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text })
+        });
+
+        if (!response.ok) {
+          throw new Error("Error al recibir respuesta del servidor.");
+        }
+
+        const data = await response.json();
+        renderResults(data);
+
+        statusEl.textContent = "Análisis completado.";
+      } catch (error) {
+        console.error(error);
+        statusEl.textContent = "Ocurrió un error al analizar el texto.";
+        alert(error.message);
+      } finally {
+        analyzeBtn.disabled = false;
+      }
+    }
+
+    function renderResults(data) {
+      resultsEl.style.display = "block";
+
+      // Tono principal
+      const tonos = data.tono_principal || [];
+      if (!tonos.length) {
+        tonoPrincipalEl.innerHTML = `<span class="empty">No se identificó un tono principal.</span>`;
+      } else {
+        tonoPrincipalEl.innerHTML = tonos
+          .map(t => `<span class="chip chip-neutral">${t}</span>`)
+          .join("");
+      }
+
+      // Emoción predominante
+      emocionPredominanteEl.innerHTML = data.emocion_predominante
+        ? `<span class="chip chip-neutral">${data.emocion_predominante}</span>`
+        : `<span class="empty">No identificada.</span>`;
+
+      // Análisis detallado
+      const analisis = data.analisis_detallado || [];
+      if (!analisis.length) {
+        analisisDetalladoEl.innerHTML = `<span class="empty">Sin detalles disponibles.</span>`;
+      } else {
+        analisisDetalladoEl.innerHTML =
+          "<ul>" +
+          analisis
+            .map(item => {
+              const polClass = createPolarityClass(item.polaridad);
+              return `
+              <li>
+                <div class="chip ${polClass}">
+                  <strong>${item.etiqueta}</strong>
+                  <span class="badge">${item.polaridad}</span>
+                  <span class="badge badge-intensity">Intensidad: ${item.intensidad}</span>
+                </div>
+                <div>${item.descripcion}</div>
+              </li>
+            `;
+            })
+            .join("") +
+          "</ul>";
+      }
+
+      // Cambios de tono
+      const cambios = data.cambios_de_tono || [];
+      if (!cambios.length) {
+        cambiosDeTonoEl.innerHTML = `<span class="empty">No se describieron cambios de tono.</span>`;
+      } else {
+        cambiosDeTonoEl.innerHTML =
+          "<ul>" +
+          cambios
+            .map(c => `
+              <li>
+                <div class="chip chip-neutral">
+                  <strong>${c.seccion}</strong>
+                  <span class="badge badge-intensity">Intensidad: ${c.intensidad_emocional}</span>
+                </div>
+                <div>${c.descripcion}</div>
+              </li>
+            `)
+            .join("") +
+          "</ul>";
+      }
+
+      // Consejos negativos
+      const consNeg = data.consejos_mejora_negativos || [];
+      if (!consNeg.length) {
+        consejosNegativosEl.innerHTML = `<span class="empty">No se generaron consejos específicos.</span>`;
+      } else {
+        consejosNegativosEl.innerHTML =
+          "<ul>" + consNeg.map(c => `<li>${c}</li>`).join("") + "</ul>";
+      }
+
+      // Consejos positivos
+      const consPos = data.consejos_refuerzo_positivos || [];
+      if (!consPos.length) {
+        consejosPositivosEl.innerHTML = `<span class="empty">No se generaron sugerencias.</span>`;
+      } else {
+        consejosPositivosEl.innerHTML =
+          "<ul>" + consPos.map(c => `<li>${c}</li>`).join("") + "</ul>";
+      }
+    }
+  </script>
+</body>
+</html>
