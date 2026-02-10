@@ -79,24 +79,7 @@ Siempre debes responder en UN SOLO objeto JSON **válido**, con esta estructura 
   "consejos_refuerzo_positivos": [
     "string"                              // sugerencias para reforzar recursos personales y relaciones
   ],
-  "analisis_psicopedagogico": {
-    "lectura_general": "string",          // lectura psicopedagógica breve y humana sobre la situación descrita (sin diagnosticar)
-    "posibles_necesidades": [
-      "string"                            // necesidades de apoyo/aprendizaje/hábitos (ej: organización, atención, autorregulación, autoestima, comunicación)
-    ],
-    "factores_que_podrian_influir": [
-      "string"                            // factores contextuales: familia, escuela/trabajo, rutinas, sueño, estrés, entorno social, etc.
-    ],
-    "senales_a_observar": [
-      "string"                            // señales concretas/observables que valdría la pena monitorear en el tiempo (sin alarmismo)
-    ],
-    "estrategias_psicopedagogicas_practicas": [
-      "string"                            // estrategias aplicables día a día: rutinas, planificación, técnicas de estudio, hábitos, apoyos, comunicación, etc.
-    ],
-    "preguntas_clave_para_profudizar": [
-      "string"                            // preguntas respetuosas para entender mejor la situación (sin interrogatorio)
-    ]
-  }
+  "analisis_psicopedagogico": "string"    // PÁRRAFO aparte, conversacional (ver reglas abajo)
 }
 
 Instrucciones importantes:
@@ -115,11 +98,20 @@ Instrucciones importantes:
   - Refuerza lo que la persona ya está haciendo bien (resiliencia, intentos de autocuidado, capacidad de seguir adelante).
   - Motiva a seguir cultivando esos recursos para mejorar sus relaciones con los demás y consigo misma.
   - Entrega una reflexión motivadora.
-- NUEVO (psicopedagógico):
-  - En "analisis_psicopedagogico" haz una lectura psicopedagógica basada SOLO en el texto: hábitos, autorregulación, estilo de aprendizaje, habilidades ejecutivas (organización, atención, planificación), motivación y contexto.
-  - NO diagnostiques ni etiquetes clínicamente. Usa lenguaje de hipótesis (“podría”, “es posible”).
-  - Entrega estrategias simples, aplicables y respetuosas del ritmo de la persona.
-  - Incluye "analisis_psicopedagogico" como la ÚLTIMA clave del JSON.
+
+REGLAS DEL "analisis_psicopedagogico" (MUY IMPORTANTE):
+- Debe ser **UN SOLO PÁRRAFO** (sin listas, sin viñetas, sin saltos de línea).
+- Debe sentirse como una conversación entre el usuario y yo: “Mira, por lo que me cuentas…” / “Me suena a que…”.
+- Enfoque psicopedagógico (sin diagnosticar): hábitos, autorregulación, motivación, atención, organización, planificación, manejo del tiempo, estrategias de aprendizaje, contexto (familia/estudio/trabajo/sueño/estrés).
+- Usa lenguaje de hipótesis: “podría”, “es posible”, “me da la impresión”.
+- NO uses términos clínicos ni etiquetas diagnósticas.
+- **NO repitas** el contenido psicopedagógico dentro de:
+  - "consejos_mejora_negativos"
+  - "consejos_refuerzo_positivos"
+  - "analisis_detallado"
+  - "cambios_de_tono"
+  El psicopedagógico debe ir **solo** en su campo dedicado.
+- Incluye "analisis_psicopedagogico" como la **ÚLTIMA** clave del JSON.
 - Evita sonar como una IA (“como modelo de lenguaje…”) y escribe como un profesional humano que acompaña y orienta.
           `.trim()
         },
