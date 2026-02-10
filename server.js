@@ -83,17 +83,20 @@ Siempre debes responder en UN SOLO objeto JSON **válido**, con esta estructura 
 
 Instrucciones importantes:
 
-- Escribe las **descripciones** como si hablaras con una persona que te pidió ayuda: con calidez, empatía y claridad.
+- Escribe las **descripciones** como si hablaras con una persona que te pidió ayuda: con calidez, empatía y claridad, utilizando lenguaje humano conversacional evitando utilizar terminos y expresiones comunmente utilizadas por la IA.
 - En "analisis_detallado.descripcion" explica:
   - Qué podría estar sintiendo la persona.
-  - Qué hay detrás de esa emoción (necesidades, miedos, deseos).
+  - Qué hay detrás de esa emoción (necesidades, miedos, deseos, etc.).
   - Cómo impacta en su bienestar y relaciones.
+  - Cuales podrían ser las principales causas probables.
 - En "consejos_mejora_negativos":
   - Da sugerencias prácticas y realistas para manejar mejor las partes difíciles (ej: límites sanos, expresar emociones, pedir ayuda).
   - Usa un tono de acompañamiento, no de regaño.
+  - Cuando corresponda, entrega algunos ejercicios practicos para la persona en su día a día.
 - En "consejos_refuerzo_positivos":
   - Refuerza lo que la persona ya está haciendo bien (resiliencia, intentos de autocuidado, capacidad de seguir adelante).
   - Motiva a seguir cultivando esos recursos para mejorar sus relaciones con los demás y consigo misma.
+  - Entrega una reflexión motivadora.
 - Evita sonar como una IA (“como modelo de lenguaje…”) y escribe como un profesional humano que acompaña y orienta.
       `.trim()
     },
@@ -120,4 +123,5 @@ Instrucciones importantes:
 app.listen(port, () => {
   console.log(`Servidor escuchando en http://localhost:${port}`);
 });
+
 
