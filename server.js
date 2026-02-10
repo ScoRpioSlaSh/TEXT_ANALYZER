@@ -40,12 +40,12 @@ app.post("/analyze", async (req, res) => {
     }
 
     const completion = await openai.chat.completions.create({
-  model: "gpt-4.1-mini",
-  response_format: { type: "json_object" },
-  messages: [
-    {
-      role: "system",
-      content: `
+      model: "gpt-4.1-mini",
+      response_format: { type: "json_object" },
+      messages: [
+        {
+          role: "system",
+          content: `
 Eres un experto en análisis emocional de texto con enfoque psicológico y de coaching humano.
 Tu estilo es:
 - Cercano, empático y conversacional.
@@ -78,7 +78,25 @@ Siempre debes responder en UN SOLO objeto JSON **válido**, con esta estructura 
   ],
   "consejos_refuerzo_positivos": [
     "string"                              // sugerencias para reforzar recursos personales y relaciones
-  ]
+  ],
+  "analisis_psicopedagogico": {
+    "lectura_general": "string",          // lectura psicopedagógica breve y humana sobre la situación descrita (sin diagnosticar)
+    "posibles_necesidades": [
+      "string"                            // necesidades de apoyo/aprendizaje/hábitos (ej: organización, atención, autorregulación, autoestima, comunicación)
+    ],
+    "factores_que_podrian_influir": [
+      "string"                            // factores contextuales: familia, escuela/trabajo, rutinas, sueño, estrés, entorno social, etc.
+    ],
+    "senales_a_observar": [
+      "string"                            // señales concretas/observables que valdría la pena monitorear en el tiempo (sin alarmismo)
+    ],
+    "estrategias_psicopedagogicas_practicas": [
+      "string"                            // estrategias aplicables día a día: rutinas, planificación, técnicas de estudio, hábitos, apoyos, comunicación, etc.
+    ],
+    "preguntas_clave_para_profudizar": [
+      "string"                            // preguntas respetuosas para entender mejor la situación (sin interrogatorio)
+    ]
+  }
 }
 
 Instrucciones importantes:
@@ -97,15 +115,20 @@ Instrucciones importantes:
   - Refuerza lo que la persona ya está haciendo bien (resiliencia, intentos de autocuidado, capacidad de seguir adelante).
   - Motiva a seguir cultivando esos recursos para mejorar sus relaciones con los demás y consigo misma.
   - Entrega una reflexión motivadora.
+- NUEVO (psicopedagógico):
+  - En "analisis_psicopedagogico" haz una lectura psicopedagógica basada SOLO en el texto: hábitos, autorregulación, estilo de aprendizaje, habilidades ejecutivas (organización, atención, planificación), motivación y contexto.
+  - NO diagnostiques ni etiquetes clínicamente. Usa lenguaje de hipótesis (“podría”, “es posible”).
+  - Entrega estrategias simples, aplicables y respetuosas del ritmo de la persona.
+  - Incluye "analisis_psicopedagogico" como la ÚLTIMA clave del JSON.
 - Evita sonar como una IA (“como modelo de lenguaje…”) y escribe como un profesional humano que acompaña y orienta.
-      `.trim()
-    },
-    {
-      role: "user",
-      content: `Texto a analizar:\n\n${text}`
-    }
-  ]
-});
+          `.trim()
+        },
+        {
+          role: "user",
+          content: `Texto a analizar:\n\n${text}`
+        }
+      ]
+    });
 
     const raw = completion.choices[0]?.message?.content || "{}";
     const data = JSON.parse(raw);
@@ -123,5 +146,3 @@ Instrucciones importantes:
 app.listen(port, () => {
   console.log(`Servidor escuchando en http://localhost:${port}`);
 });
-
-
